@@ -1,8 +1,9 @@
 package user
 
 import (
-	"context"
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,47 +11,12 @@ import (
 
 	domain_user "go-gin-domain/internal/domain/user"
 	"go-gin-domain/internal/presentation/middleware"
+	mockUser "go-gin-domain/internal/application/usecase/user/mock_user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
+	"go.uber.org/mock/gomock"
 )
-
-// ユースケースのモック定義
-type MockUserUsecase struct {
-	mock.Mock
-}
-
-func (m *MockUserUsecase) Create(ctx context.Context, lastName, firstName, email string) (*domain_user.User, error) {
-	args := m.Called(ctx, lastName, firstName, email)
-	return args.Get(0).(*domain_user.User), args.Error(1)
-}
-
-func (m *MockUserUsecase) FindAll(ctx context.Context) ([]*domain_user.User, error) {
-	args := m.Called(ctx)
-
-	var users []*domain_user.User
-	if arg := args.Get(0); arg != nil {
-		users = arg.([]*domain_user.User)
-	}
-
-	return users, args.Error(1)
-}
-
-func (m *MockUserUsecase) FindByUID(ctx context.Context, uid string) (*domain_user.User, error) {
-	args := m.Called(ctx, uid)
-	return args.Get(0).(*domain_user.User), args.Error(1)
-}
-
-func (m *MockUserUsecase) Update(ctx context.Context, uid, lastName, firstName, email string) (*domain_user.User, error) {
-	args := m.Called(ctx, uid, lastName, firstName, email)
-	return args.Get(0).(*domain_user.User), args.Error(1)
-}
-
-func (m *MockUserUsecase) Delete(ctx context.Context, uid string) (*domain_user.User, error) {
-	args := m.Called(ctx, uid)
-	return args.Get(0).(*domain_user.User), args.Error(1)
-}
 
 // テスト用Ginの初期化処理
 func initTestGin() (*gin.Engine, *gin.RouterGroup) {
@@ -63,18 +29,143 @@ func initTestGin() (*gin.Engine, *gin.RouterGroup) {
 	r.Use(gin.Recovery())
 
 	apiV1 := r.Group("/api/v1")
-	apiV1.Use(m.Auth())
 
 	return r, apiV1
+}
+
+func TestUserHandler_Create(t *testing.T) {
+	// Ginのテストモードに設定
+	gin.SetMode(gin.TestMode)
+
+	// ユースケースのモック
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockUserUsecase := mockUser.NewMockUserUsecase(ctrl)
+
+	t.Run("should return 201 Created with user json", func(t *testing.T) {
+		// モック化
+		expectedUser := &domain_user.User{
+			ID:        1,
+			UID:       "xxxx-xxxx-xxxx-0001",
+			LastName:  "田中",
+			FirstName: "太郎",
+			Email:     "t.tanaka@example.com",
+			CreatedAt: time.Time{},
+			UpdatedAt: time.Time{},
+			DeletedAt: nil,
+		}
+		mockUserUsecase.EXPECT().Create(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedUser, nil)
+
+		// ルーター設定
+		r, apiV1 := initTestGin()
+		h := NewUserHandler(mockUserUsecase)
+		apiV1.POST("/user", h.Create)
+
+		// リクエスト設定
+		path := "/api/v1/user"
+		reqBody := CreateUserRequestBody{
+			LastName:  "田中",
+			FirstName: "太郎",
+			Email:     "t.tanaka@example.com",
+		}
+		jsonReqBody, err := json.Marshal(reqBody)
+		if err != nil {
+			t.Fatal(err)
+		}
+		req := httptest.NewRequest(http.MethodPost, path, bytes.NewBuffer(jsonReqBody))
+
+		// テストの実行
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+
+		// 検証
+		assert.Equal(t, http.StatusCreated, w.Code)
+
+		var data map[string]interface{}
+		err = json.Unmarshal(w.Body.Bytes(), &data)
+		assert.NoError(t, err)
+
+		assert.NotContains(t, data, "id")
+		assert.NotNil(t, data["uid"])
+		assert.Equal(t, expectedUser.LastName, data["last_name"])
+		assert.Equal(t, expectedUser.FirstName, data["first_name"])
+		assert.Equal(t, expectedUser.Email, data["email"])
+		assert.NotNil(t, data["created_at"])
+		assert.NotNil(t, data["updated_at"])
+		assert.Nil(t, data["deleted_at"])
+	})
+
+	t.Run("should return 500 Internal Server Error with error message", func(t *testing.T) {
+		err := fmt.Errorf("Internal Server Error")
+		mockUserUsecase.EXPECT().Create(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, err)
+
+		// ルーター設定
+		r, apiV1 := initTestGin()
+		h := NewUserHandler(mockUserUsecase)
+		apiV1.POST("/user", h.Create)
+
+		// リクエスト設定
+		path := "/api/v1/user"
+		reqBody := CreateUserRequestBody{
+			LastName:  "田中",
+			FirstName: "太郎",
+			Email:     "t.tanaka@example.com",
+		}
+		jsonReqBody, err := json.Marshal(reqBody)
+		if err != nil {
+			t.Fatal(err)
+		}
+		req := httptest.NewRequest(http.MethodPost, path, bytes.NewBuffer(jsonReqBody))
+
+		// テストの実行
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+
+		// 検証
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		assert.Contains(t, w.Body.String(), "Internal Server Error")
+	})
+
+	t.Run("should return 422 Unprocessable Entity with error message", func(t *testing.T) {
+		// ルーター設定
+		r, apiV1 := initTestGin()
+		h := NewUserHandler(mockUserUsecase)
+		apiV1.POST("/user", h.Create)
+
+		// リクエスト設定
+		path := "/api/v1/user"
+		reqBody := CreateUserRequestBody{
+			LastName:  "",
+			FirstName: "太郎",
+			Email:     "t.tanaka@example.com",
+		}
+		jsonReqBody, err := json.Marshal(reqBody)
+		if err != nil {
+			t.Fatal(err)
+		}
+		req := httptest.NewRequest(http.MethodPost, path, bytes.NewBuffer(jsonReqBody))
+
+		// テストの実行
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+
+		// 検証
+		assert.Equal(t, http.StatusUnprocessableEntity, w.Code)
+		assert.Contains(t, w.Body.String(), "バリデーションエラー")
+	})
 }
 
 func TestUserHandler_FindAll(t *testing.T) {
 	// Ginのテストモードに設定
 	gin.SetMode(gin.TestMode)
 
+	// ユースケースのモック
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockUserUsecase := mockUser.NewMockUserUsecase(ctrl)
+
 	t.Run("should return 200 OK with users json", func(t *testing.T) {
 		// モック化
-		mockUserUsecase := new(MockUserUsecase)
 		expectedUsers := []*domain_user.User{
 			{
 				ID:        1,
@@ -97,16 +188,17 @@ func TestUserHandler_FindAll(t *testing.T) {
 				DeletedAt: nil,
 			},
 		}
-		mockUserUsecase.On("FindAll", mock.Anything).Return(expectedUsers, nil)
+		mockUserUsecase.EXPECT().FindAll(gomock.Any()).Return(expectedUsers, nil)
 
 		// ルーター設定
 		r, apiV1 := initTestGin()
+		m := middleware.NewMiddleware()
 		h := NewUserHandler(mockUserUsecase)
-		apiV1.GET("/users", h.FindAll)
+		apiV1.GET("/users", m.Auth(), h.FindAll)
 
 		// リクエスト設定
 		path := "/api/v1/users"
-		req, _ := http.NewRequest(http.MethodGet, path, nil)
+		req := httptest.NewRequest(http.MethodGet, path, nil)
 		req.Header.Set("Authorization", "Bearer xxxxxx")
 
 		// テストの実行
@@ -116,27 +208,26 @@ func TestUserHandler_FindAll(t *testing.T) {
 		// 検証
 		assert.Equal(t, http.StatusOK, w.Code)
 
-		var responseUsers []*domain_user.User
-		err := json.Unmarshal(w.Body.Bytes(), &responseUsers)
+		var list []map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &list)
 		assert.NoError(t, err)
-		assert.Equal(t, len(expectedUsers), len(responseUsers))
 
-		assert.Equal(t, expectedUsers[0].UID, responseUsers[0].UID)
-		assert.Equal(t, expectedUsers[0].LastName, responseUsers[0].LastName)
-		assert.Equal(t, expectedUsers[0].FirstName, responseUsers[0].FirstName)
-		assert.Equal(t, expectedUsers[0].Email, responseUsers[0].Email)
-		assert.Equal(t, expectedUsers[0].CreatedAt, responseUsers[0].CreatedAt)
-		assert.Equal(t, expectedUsers[0].UpdatedAt, responseUsers[0].UpdatedAt)
-		assert.Equal(t, expectedUsers[0].DeletedAt, responseUsers[0].DeletedAt)
+		assert.NotContains(t, list[0], "id")
+		assert.Equal(t, expectedUsers[0].UID, list[0]["uid"])
+		assert.Equal(t, expectedUsers[0].LastName, list[0]["last_name"])
+		assert.Equal(t, expectedUsers[0].FirstName, list[0]["first_name"])
+		assert.Equal(t, expectedUsers[0].Email, list[0]["email"])
+		assert.NotNil(t, list[0]["created_at"])
+		assert.NotNil(t, list[0]["updated_at"])
+		assert.Nil(t, list[0]["deleted_at"])
 
-		assert.Equal(t, expectedUsers[1].UID, responseUsers[1].UID)
-		assert.Equal(t, expectedUsers[1].LastName, responseUsers[1].LastName)
-		assert.Equal(t, expectedUsers[1].FirstName, responseUsers[1].FirstName)
-		assert.Equal(t, expectedUsers[1].Email, responseUsers[1].Email)
-		assert.Equal(t, expectedUsers[1].CreatedAt, responseUsers[1].CreatedAt)
-		assert.Equal(t, expectedUsers[1].UpdatedAt, responseUsers[1].UpdatedAt)
-		assert.Equal(t, expectedUsers[1].DeletedAt, responseUsers[1].DeletedAt)
-
-		mockUserUsecase.AssertExpectations(t)
+		assert.NotContains(t, list[1], "id")
+		assert.Equal(t, expectedUsers[1].UID, list[1]["uid"])
+		assert.Equal(t, expectedUsers[1].LastName, list[1]["last_name"])
+		assert.Equal(t, expectedUsers[1].FirstName, list[1]["first_name"])
+		assert.Equal(t, expectedUsers[1].Email, list[1]["email"])
+		assert.NotNil(t, list[1]["created_at"])
+		assert.NotNil(t, list[1]["updated_at"])
+		assert.Nil(t, list[1]["deleted_at"])
 	})
 }

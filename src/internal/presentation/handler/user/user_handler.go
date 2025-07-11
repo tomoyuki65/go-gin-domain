@@ -49,7 +49,7 @@ func (h *userHandler) Create(c *gin.Context) {
 	var reqBody CreateUserRequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		msg := fmt.Sprintf("バリデーションエラー: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"message": msg,
 		})
 		return
@@ -91,7 +91,7 @@ func (h *userHandler) FindByUID(c *gin.Context) {
 	uid := c.Param("uid")
 	if uid == "" {
 		msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"message": msg,
 		})
 		return
@@ -123,7 +123,7 @@ func (h *userHandler) Update(c *gin.Context) {
 	uid := c.Param("uid")
 	if uid == "" {
 		msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"message": msg,
 		})
 		return
@@ -132,7 +132,7 @@ func (h *userHandler) Update(c *gin.Context) {
 	var reqBody UpdateUserRequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		msg := fmt.Sprintf("バリデーションエラー: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"message": msg,
 		})
 		return
@@ -158,7 +158,7 @@ func (h *userHandler) Delete(c *gin.Context) {
 	uid := c.Param("uid")
 	if uid == "" {
 		msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"message": msg,
 		})
 		return

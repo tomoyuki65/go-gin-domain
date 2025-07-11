@@ -67,7 +67,7 @@
 				
 				<option value="file5">go-gin-domain/internal/application/usecase/user/user_update.go (0.0%)</option>
 				
-				<option value="file6">go-gin-domain/internal/presentation/handler/user/user_handler.go (7.8%)</option>
+				<option value="file6">go-gin-domain/internal/presentation/handler/user/user_handler.go (26.6%)</option>
 				
 				</select>
 			</div>
@@ -262,22 +262,22 @@ type UpdateUserRequestBody struct {
         Email     string `json:"email" binding:"required,email"`
 }
 
-func (h *userHandler) Create(c *gin.Context) <span class="cov0" title="0">{
+func (h *userHandler) Create(c *gin.Context) <span class="cov8" title="1">{
         // 共通コンテキスト
         ctx := c.Request.Context()
 
         // バリデーションチェック
         var reqBody CreateUserRequestBody
-        if err := c.ShouldBindJSON(&amp;reqBody); err != nil </span><span class="cov0" title="0">{
+        if err := c.ShouldBindJSON(&amp;reqBody); err != nil </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("バリデーションエラー: %s", err.Error())
-                c.JSON(http.StatusBadRequest, gin.H{
+                c.JSON(http.StatusUnprocessableEntity, gin.H{
                         "message": msg,
                 })
                 return
         }</span>
 
-        <span class="cov0" title="0">user, err := h.userUsecase.Create(ctx, reqBody.LastName, reqBody.FirstName, reqBody.Email)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">user, err := h.userUsecase.Create(ctx, reqBody.LastName, reqBody.FirstName, reqBody.Email)
+        if err != nil </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("Internal Server Error: %s", err.Error())
                 c.JSON(http.StatusInternalServerError, gin.H{
                         "message": msg,
@@ -285,7 +285,7 @@ func (h *userHandler) Create(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">c.JSON(http.StatusCreated, user)</span>
+        <span class="cov8" title="1">c.JSON(http.StatusCreated, user)</span>
 }
 
 func (h *userHandler) FindAll(c *gin.Context) <span class="cov8" title="1">{
@@ -312,7 +312,7 @@ func (h *userHandler) FindByUID(c *gin.Context) <span class="cov0" title="0">{
         uid := c.Param("uid")
         if uid == "" </span><span class="cov0" title="0">{
                 msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
-                c.JSON(http.StatusBadRequest, gin.H{
+                c.JSON(http.StatusUnprocessableEntity, gin.H{
                         "message": msg,
                 })
                 return
@@ -344,7 +344,7 @@ func (h *userHandler) Update(c *gin.Context) <span class="cov0" title="0">{
         uid := c.Param("uid")
         if uid == "" </span><span class="cov0" title="0">{
                 msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
-                c.JSON(http.StatusBadRequest, gin.H{
+                c.JSON(http.StatusUnprocessableEntity, gin.H{
                         "message": msg,
                 })
                 return
@@ -353,7 +353,7 @@ func (h *userHandler) Update(c *gin.Context) <span class="cov0" title="0">{
         <span class="cov0" title="0">var reqBody UpdateUserRequestBody
         if err := c.ShouldBindJSON(&amp;reqBody); err != nil </span><span class="cov0" title="0">{
                 msg := fmt.Sprintf("バリデーションエラー: %s", err.Error())
-                c.JSON(http.StatusBadRequest, gin.H{
+                c.JSON(http.StatusUnprocessableEntity, gin.H{
                         "message": msg,
                 })
                 return
@@ -379,7 +379,7 @@ func (h *userHandler) Delete(c *gin.Context) <span class="cov0" title="0">{
         uid := c.Param("uid")
         if uid == "" </span><span class="cov0" title="0">{
                 msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
-                c.JSON(http.StatusBadRequest, gin.H{
+                c.JSON(http.StatusUnprocessableEntity, gin.H{
                         "message": msg,
                 })
                 return

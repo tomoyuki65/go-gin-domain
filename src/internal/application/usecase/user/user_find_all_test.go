@@ -6,74 +6,24 @@ import (
 	"time"
 
 	domain_user "go-gin-domain/internal/domain/user"
+	mockUser "go-gin-domain/internal/infrastructure/persistence/user/mock_user_repository"
+	mockLogger "go-gin-domain/internal/application/usecase/logger/mock_logger"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
+	"go.uber.org/mock/gomock"
 )
 
-// リポジトリのモック定義
-type MockUserRepository struct {
-	mock.Mock
-}
-
-func (m *MockUserRepository) Create(ctx context.Context, user *domain_user.User) (*domain_user.User, error) {
-	args := m.Called(ctx, user)
-	return args.Get(0).(*domain_user.User), args.Error(1)
-}
-func (m *MockUserRepository) FindAll(ctx context.Context) ([]*domain_user.User, error) {
-	args := m.Called(ctx)
-
-	var users []*domain_user.User
-	if arg := args.Get(0); arg != nil {
-		users = arg.([]*domain_user.User)
-	}
-
-	return users, args.Error(1)
-}
-
-func (m *MockUserRepository) FindByUID(ctx context.Context, uid string) (*domain_user.User, error) {
-	args := m.Called(ctx, uid)
-	return args.Get(0).(*domain_user.User), args.Error(1)
-}
-
-func (m *MockUserRepository) Save(ctx context.Context, user *domain_user.User) (*domain_user.User, error) {
-	args := m.Called(ctx, user)
-	return args.Get(0).(*domain_user.User), args.Error(1)
-}
-
-// ロガーのモック定義
-type MockLogger struct {
-	mock.Mock
-}
-
-func (m *MockLogger) Info(ctx context.Context, msg string) {
-	m.Called(ctx, msg)
-}
-func (m *MockLogger) Warn(ctx context.Context, msg string) {
-	m.Called(ctx, msg)
-}
-func (m *MockLogger) Error(ctx context.Context, msg string) {
-	m.Called(ctx, msg)
-}
-
-func setupMockLogger(t *testing.T) *MockLogger {
-	t.Helper() // これを呼び出すとテスト失敗時にこの関数がコールスタックに表示されなくなる
-
-	mockLogger := new(MockLogger)
-	logLevels := []string{"Info", "Warn", "Error"}
-
-	for _, level := range logLevels {
-		mockLogger.On(level, mock.Anything).Return()
-	}
-
-	return mockLogger
-}
-
 func TestUserUsecase_FindAll(t *testing.T) {
+	// リポジトリのモック
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockRepo := mockUser.NewMockUserRepository(ctrl)
+
+	// ロガーのモック
+	mockLogger := mockLogger.NewMockLogger(ctrl)
+
 	t.Run("should return all users successfully", func(t *testing.T) {
 		// モック化
-		mockRepo := new(MockUserRepository)
-		ctx := context.Background()
 		expectedUsers := []*domain_user.User{
 			{
 				ID:        1,
@@ -96,13 +46,13 @@ func TestUserUsecase_FindAll(t *testing.T) {
 				DeletedAt: nil,
 			},
 		}
-		mockRepo.On("FindAll", ctx).Return(expectedUsers, nil)
-		mockLogger := setupMockLogger(t)
+		mockRepo.EXPECT().FindAll(gomock.Any()).Return(expectedUsers, nil)
 
 		// ユースケースのインスタンス化
 		userUsecase := NewUserUsecase(mockRepo, mockLogger)
 
 		// テストの実行
+		ctx := context.Background()
 		users, err := userUsecase.FindAll(ctx)
 
 		// 検証
@@ -127,7 +77,5 @@ func TestUserUsecase_FindAll(t *testing.T) {
 		assert.Equal(t, expectedUsers[1].CreatedAt, users[1].CreatedAt)
 		assert.Equal(t, expectedUsers[1].UpdatedAt, users[1].UpdatedAt)
 		assert.Equal(t, expectedUsers[1].DeletedAt, users[1].DeletedAt)
-
-		mockRepo.AssertExpectations(t)
 	})
 }
