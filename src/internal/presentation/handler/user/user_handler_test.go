@@ -9,14 +9,22 @@ import (
 	"testing"
 	"time"
 
+	mockUser "go-gin-domain/internal/application/usecase/user/mock_user"
 	domain_user "go-gin-domain/internal/domain/user"
 	"go-gin-domain/internal/presentation/middleware"
-	mockUser "go-gin-domain/internal/application/usecase/user/mock_user"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
+
+func init() {
+	// .env.testingの読み込み
+	if err := godotenv.Load("../../../../.env.testing"); err != nil {
+		fmt.Println(".env.testingの読み込みに失敗しました。")
+	}
+}
 
 // テスト用Ginの初期化処理
 func initTestGin() (*gin.Engine, *gin.RouterGroup) {

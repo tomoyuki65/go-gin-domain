@@ -2,16 +2,26 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
+	mockLogger "go-gin-domain/internal/application/usecase/logger/mock_logger"
 	domain_user "go-gin-domain/internal/domain/user"
 	mockUser "go-gin-domain/internal/infrastructure/persistence/user/mock_user_repository"
-	mockLogger "go-gin-domain/internal/application/usecase/logger/mock_logger"
 
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
+
+// 初期処理
+func init() {
+	// テスト用の環境変数ファイル「.env.testing」を読み込んで使用する。
+	if err := godotenv.Load("../../../../.env.testing"); err != nil {
+		fmt.Println(".env.testingの読み込みに失敗しました。")
+	}
+}
 
 func TestUserUsecase_FindAll(t *testing.T) {
 	// リポジトリのモック
