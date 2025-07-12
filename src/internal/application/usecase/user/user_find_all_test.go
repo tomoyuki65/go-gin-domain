@@ -32,7 +32,7 @@ func TestUserUsecase_FindAll(t *testing.T) {
 	// ロガーのモック
 	mockLogger := mockLogger.NewMockLogger(ctrl)
 
-	t.Run("should return all users successfully", func(t *testing.T) {
+	t.Run("正常終了すること", func(t *testing.T) {
 		// モック化
 		expectedUsers := []*domain_user.User{
 			{

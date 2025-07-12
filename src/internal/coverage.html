@@ -57,15 +57,15 @@
 				
 				<option value="file0">go-gin-domain/internal/application/usecase/user/user.go (100.0%)</option>
 				
-				<option value="file1">go-gin-domain/internal/application/usecase/user/user_create.go (0.0%)</option>
+				<option value="file1">go-gin-domain/internal/application/usecase/user/user_create.go (100.0%)</option>
 				
-				<option value="file2">go-gin-domain/internal/application/usecase/user/user_delete.go (0.0%)</option>
+				<option value="file2">go-gin-domain/internal/application/usecase/user/user_delete.go (100.0%)</option>
 				
 				<option value="file3">go-gin-domain/internal/application/usecase/user/user_find_all.go (100.0%)</option>
 				
-				<option value="file4">go-gin-domain/internal/application/usecase/user/user_find_by_uid.go (0.0%)</option>
+				<option value="file4">go-gin-domain/internal/application/usecase/user/user_find_by_uid.go (100.0%)</option>
 				
-				<option value="file5">go-gin-domain/internal/application/usecase/user/user_update.go (0.0%)</option>
+				<option value="file5">go-gin-domain/internal/application/usecase/user/user_update.go (100.0%)</option>
 				
 				<option value="file6">go-gin-domain/internal/presentation/handler/user/user_handler.go (100.0%)</option>
 				
@@ -121,7 +121,7 @@ import (
         "github.com/google/uuid"
 )
 
-func (u *userUsecase) Create(ctx context.Context, lastName, firstName, email string) (*domain_user.User, error) <span class="cov0" title="0">{
+func (u *userUsecase) Create(ctx context.Context, lastName, firstName, email string) (*domain_user.User, error) <span class="cov8" title="1">{
         // UIDの設定（仮）
         uid := uuid.New().String()
 
@@ -141,21 +141,21 @@ import (
         domain_user "go-gin-domain/internal/domain/user"
 )
 
-func (u *userUsecase) Delete(ctx context.Context, uid string) (*domain_user.User, error) <span class="cov0" title="0">{
+func (u *userUsecase) Delete(ctx context.Context, uid string) (*domain_user.User, error) <span class="cov8" title="1">{
         user, err := u.userRepo.FindByUID(ctx, uid)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
 
         // 対象ユーザーが存在しない場合はエラー
-        <span class="cov0" title="0">if user == nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if user == nil </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("対象ユーザーが存在しません。: UID=%s", uid)
                 u.logger.Error(ctx, msg)
                 return nil, fmt.Errorf("%s", msg)
         }</span>
 
         // 論理削除設定
-        <span class="cov0" title="0">user.SetDelete()
+        <span class="cov8" title="1">user.SetDelete()
 
         return u.userRepo.Save(ctx, user)</span>
 }
@@ -182,7 +182,7 @@ import (
         domain_user "go-gin-domain/internal/domain/user"
 )
 
-func (u *userUsecase) FindByUID(ctx context.Context, uid string) (*domain_user.User, error) <span class="cov0" title="0">{
+func (u *userUsecase) FindByUID(ctx context.Context, uid string) (*domain_user.User, error) <span class="cov8" title="1">{
         return u.userRepo.FindByUID(ctx, uid)
 }</span>
 </pre>
@@ -196,26 +196,26 @@ import (
         domain_user "go-gin-domain/internal/domain/user"
 )
 
-func (u *userUsecase) Update(ctx context.Context, uid, lastName, firstName, email string) (*domain_user.User, error) <span class="cov0" title="0">{
+func (u *userUsecase) Update(ctx context.Context, uid, lastName, firstName, email string) (*domain_user.User, error) <span class="cov8" title="1">{
         user, err := u.userRepo.FindByUID(ctx, uid)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
 
         // 対象ユーザーが存在しない場合はエラー
-        <span class="cov0" title="0">if user == nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if user == nil </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("対象ユーザーが存在しません。: UID=%s", uid)
                 u.logger.Error(ctx, msg)
                 return nil, fmt.Errorf("%s", msg)
         }</span>
 
         // プロフィール更新
-        <span class="cov0" title="0">err = user.UpdateProfile(lastName, firstName, email)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">err = user.UpdateProfile(lastName, firstName, email)
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return u.userRepo.Save(ctx, user)</span>
+        <span class="cov8" title="1">return u.userRepo.Save(ctx, user)</span>
 }
 </pre>
 		
