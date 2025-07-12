@@ -8,10 +8,10 @@ import (
 	"net/http/httptest"
 	"testing"
 	"time"
-	
+
+	mockUser "go-gin-domain/internal/application/usecase/user/mock_user"
 	domain_user "go-gin-domain/internal/domain/user"
 	"go-gin-domain/internal/presentation/middleware"
-	mockUser "go-gin-domain/internal/application/usecase/user/mock_user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -374,7 +374,7 @@ func TestUserHandler_FindByUID(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 		assert.Contains(t, w.Body.String(), "Internal Server Error")
 	})
-	
+
 	t.Run("バリデーションチェックでエラーの場合にステータス422を返すこと", func(t *testing.T) {
 		// ルーター設定
 		r, apiV1 := initTestGin()

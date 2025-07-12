@@ -35,13 +35,13 @@ func (u *User) UpdateProfile(lastName, firstName, email string) error {
 	// パラメータチェック
 	var errMsg []string
 	if lastName == "" {
-		errMsg = append(errMsg, "last_name is required")
+		errMsg = append(errMsg, "last_nameは必須です。")
 	}
 	if firstName == "" {
-		errMsg = append(errMsg, "first_name is required")
+		errMsg = append(errMsg, "first_nameは必須です。")
 	}
 	if email == "" {
-		errMsg = append(errMsg, "email is required")
+		errMsg = append(errMsg, "emailは必須です。")
 	}
 	if len(errMsg) > 0 {
 		msg := fmt.Sprintf("バリデーションエラー: %s", strings.Join(errMsg, ", "))
