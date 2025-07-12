@@ -67,7 +67,7 @@
 				
 				<option value="file5">go-gin-domain/internal/application/usecase/user/user_update.go (0.0%)</option>
 				
-				<option value="file6">go-gin-domain/internal/presentation/handler/user/user_handler.go (26.6%)</option>
+				<option value="file6">go-gin-domain/internal/presentation/handler/user/user_handler.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -224,6 +224,7 @@ func (u *userUsecase) Update(ctx context.Context, uid, lastName, firstName, emai
 import (
         "fmt"
         "net/http"
+        "strings"
 
         usecase "go-gin-domain/internal/application/usecase/user"
 
@@ -293,7 +294,7 @@ func (h *userHandler) FindAll(c *gin.Context) <span class="cov8" title="1">{
         ctx := c.Request.Context()
 
         users, err := h.userUsecase.FindAll(ctx)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("Internal Server Error: %s", err.Error())
                 c.JSON(http.StatusInternalServerError, gin.H{
                         "message": msg,
@@ -304,13 +305,13 @@ func (h *userHandler) FindAll(c *gin.Context) <span class="cov8" title="1">{
         <span class="cov8" title="1">c.JSON(http.StatusOK, users)</span>
 }
 
-func (h *userHandler) FindByUID(c *gin.Context) <span class="cov0" title="0">{
+func (h *userHandler) FindByUID(c *gin.Context) <span class="cov8" title="1">{
         // 共通コンテキスト
         ctx := c.Request.Context()
 
         // バリデーションチェック
         uid := c.Param("uid")
-        if uid == "" </span><span class="cov0" title="0">{
+        if strings.TrimSpace(uid) == "" </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
                 c.JSON(http.StatusUnprocessableEntity, gin.H{
                         "message": msg,
@@ -318,8 +319,8 @@ func (h *userHandler) FindByUID(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">user, err := h.userUsecase.FindByUID(ctx, uid)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">user, err := h.userUsecase.FindByUID(ctx, uid)
+        if err != nil </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("Internal Server Error: %s", err.Error())
                 c.JSON(http.StatusInternalServerError, gin.H{
                         "message": msg,
@@ -328,21 +329,21 @@ func (h *userHandler) FindByUID(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         // userがnilの場合に空のオブジェクトを返す
-        <span class="cov0" title="0">if user == nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if user == nil </span><span class="cov8" title="1">{
                 c.JSON(http.StatusOK, map[string]interface{}{})
                 return
         }</span>
 
-        <span class="cov0" title="0">c.JSON(http.StatusOK, user)</span>
+        <span class="cov8" title="1">c.JSON(http.StatusOK, user)</span>
 }
 
-func (h *userHandler) Update(c *gin.Context) <span class="cov0" title="0">{
+func (h *userHandler) Update(c *gin.Context) <span class="cov8" title="1">{
         // 共通コンテキスト
         ctx := c.Request.Context()
 
         // バリデーションチェック
         uid := c.Param("uid")
-        if uid == "" </span><span class="cov0" title="0">{
+        if strings.TrimSpace(uid) == "" </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
                 c.JSON(http.StatusUnprocessableEntity, gin.H{
                         "message": msg,
@@ -350,8 +351,8 @@ func (h *userHandler) Update(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">var reqBody UpdateUserRequestBody
-        if err := c.ShouldBindJSON(&amp;reqBody); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">var reqBody UpdateUserRequestBody
+        if err := c.ShouldBindJSON(&amp;reqBody); err != nil </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("バリデーションエラー: %s", err.Error())
                 c.JSON(http.StatusUnprocessableEntity, gin.H{
                         "message": msg,
@@ -359,8 +360,8 @@ func (h *userHandler) Update(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">user, err := h.userUsecase.Update(ctx, uid, reqBody.LastName, reqBody.FirstName, reqBody.Email)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">user, err := h.userUsecase.Update(ctx, uid, reqBody.LastName, reqBody.FirstName, reqBody.Email)
+        if err != nil </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("Internal Server Error: %s", err.Error())
                 c.JSON(http.StatusInternalServerError, gin.H{
                         "message": msg,
@@ -368,16 +369,16 @@ func (h *userHandler) Update(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">c.JSON(http.StatusOK, user)</span>
+        <span class="cov8" title="1">c.JSON(http.StatusOK, user)</span>
 }
 
-func (h *userHandler) Delete(c *gin.Context) <span class="cov0" title="0">{
+func (h *userHandler) Delete(c *gin.Context) <span class="cov8" title="1">{
         // 共通コンテキスト
         ctx := c.Request.Context()
 
         // バリデーションチェック
         uid := c.Param("uid")
-        if uid == "" </span><span class="cov0" title="0">{
+        if strings.TrimSpace(uid) == "" </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
                 c.JSON(http.StatusUnprocessableEntity, gin.H{
                         "message": msg,
@@ -385,8 +386,8 @@ func (h *userHandler) Delete(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">user, err := h.userUsecase.Delete(ctx, uid)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">user, err := h.userUsecase.Delete(ctx, uid)
+        if err != nil </span><span class="cov8" title="1">{
                 msg := fmt.Sprintf("Internal Server Error: %s", err.Error())
                 c.JSON(http.StatusInternalServerError, gin.H{
                         "message": msg,
@@ -394,7 +395,7 @@ func (h *userHandler) Delete(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">c.JSON(http.StatusOK, user)</span>
+        <span class="cov8" title="1">c.JSON(http.StatusOK, user)</span>
 }
 </pre>
 		

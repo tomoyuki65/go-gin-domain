@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	usecase "go-gin-domain/internal/application/usecase/user"
 
@@ -89,7 +90,7 @@ func (h *userHandler) FindByUID(c *gin.Context) {
 
 	// バリデーションチェック
 	uid := c.Param("uid")
-	if uid == "" {
+	if strings.TrimSpace(uid) == "" {
 		msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"message": msg,
@@ -121,7 +122,7 @@ func (h *userHandler) Update(c *gin.Context) {
 
 	// バリデーションチェック
 	uid := c.Param("uid")
-	if uid == "" {
+	if strings.TrimSpace(uid) == "" {
 		msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"message": msg,
@@ -156,7 +157,7 @@ func (h *userHandler) Delete(c *gin.Context) {
 
 	// バリデーションチェック
 	uid := c.Param("uid")
-	if uid == "" {
+	if strings.TrimSpace(uid) == "" {
 		msg := fmt.Sprintf("バリデーションエラー: %s", "uid is required")
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"message": msg,
