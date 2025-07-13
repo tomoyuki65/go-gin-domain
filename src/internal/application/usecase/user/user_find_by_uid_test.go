@@ -8,7 +8,7 @@ import (
 
 	mockLogger "go-gin-domain/internal/application/usecase/logger/mock_logger"
 	domain_user "go-gin-domain/internal/domain/user"
-	mockUser "go-gin-domain/internal/infrastructure/persistence/user/mock_user_repository"
+	mockUser "go-gin-domain/internal/domain/user/mock_user_repository"
 
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
