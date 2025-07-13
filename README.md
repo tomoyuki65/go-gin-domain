@@ -102,7 +102,7 @@ docker compose exec api staticcheck ./...
 ### 4. モック用ファイル作成（例）  
 ・リポジトリのモックファイル作成
 ```
-docker compose exec api mockgen -source=./internal/domain/XXX/XXX_repository.go -destination=./internal/infrastructure/persistence/XXX/mock_XXX_repository/mock_XXX_repository.go
+docker compose exec api mockgen -source=./internal/domain/XXX/XXX_repository.go -destination=./internal/domain/XXX/mock_XXX_repository/mock_XXX_repository.go
 ```  
   
 ・ユースケースのモックファイル作成  
