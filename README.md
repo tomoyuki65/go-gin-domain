@@ -129,6 +129,5 @@ docker compose exec api go tool cover -html=internal/coverage.out -o=internal/co
 <br />
   
 ## 参考記事  
-※あとで追加予定※
-[]()  
+[・Go言語（Golang）のGinでDDD（ドメイン駆動設計）構成のバックエンドAPIを開発する方法まとめ](https://golang.tomoyuki65.com/how-to-develop-api-with-ddd-using-gin-in-golang)  
   
