@@ -42,61 +42,61 @@ func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserRepository) Create(ctx context.Context, arg1 *user.User) (*user.User, error) {
+func (m *MockUserRepository) Create(ctx context.Context, db string, arg2 *user.User) (*user.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", ctx, arg1)
+	ret := m.ctrl.Call(m, "Create", ctx, db, arg2)
 	ret0, _ := ret[0].(*user.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserRepositoryMockRecorder) Create(ctx, arg1 any) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) Create(ctx, db, arg2 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepository)(nil).Create), ctx, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepository)(nil).Create), ctx, db, arg2)
 }
 
 // FindAll mocks base method.
-func (m *MockUserRepository) FindAll(ctx context.Context) ([]*user.User, error) {
+func (m *MockUserRepository) FindAll(ctx context.Context, db string) ([]*user.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindAll", ctx)
+	ret := m.ctrl.Call(m, "FindAll", ctx, db)
 	ret0, _ := ret[0].([]*user.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindAll indicates an expected call of FindAll.
-func (mr *MockUserRepositoryMockRecorder) FindAll(ctx any) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) FindAll(ctx, db any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAll", reflect.TypeOf((*MockUserRepository)(nil).FindAll), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAll", reflect.TypeOf((*MockUserRepository)(nil).FindAll), ctx, db)
 }
 
 // FindByUID mocks base method.
-func (m *MockUserRepository) FindByUID(ctx context.Context, uid string) (*user.User, error) {
+func (m *MockUserRepository) FindByUID(ctx context.Context, db, uid string) (*user.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByUID", ctx, uid)
+	ret := m.ctrl.Call(m, "FindByUID", ctx, db, uid)
 	ret0, _ := ret[0].(*user.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByUID indicates an expected call of FindByUID.
-func (mr *MockUserRepositoryMockRecorder) FindByUID(ctx, uid any) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) FindByUID(ctx, db, uid any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUID", reflect.TypeOf((*MockUserRepository)(nil).FindByUID), ctx, uid)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUID", reflect.TypeOf((*MockUserRepository)(nil).FindByUID), ctx, db, uid)
 }
 
 // Save mocks base method.
-func (m *MockUserRepository) Save(ctx context.Context, arg1 *user.User) (*user.User, error) {
+func (m *MockUserRepository) Save(ctx context.Context, db string, arg2 *user.User) (*user.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Save", ctx, arg1)
+	ret := m.ctrl.Call(m, "Save", ctx, db, arg2)
 	ret0, _ := ret[0].(*user.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Save indicates an expected call of Save.
-func (mr *MockUserRepositoryMockRecorder) Save(ctx, arg1 any) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) Save(ctx, db, arg2 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockUserRepository)(nil).Save), ctx, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockUserRepository)(nil).Save), ctx, db, arg2)
 }

@@ -24,6 +24,9 @@ func init() {
 }
 
 func TestUserUsecase_FindAll(t *testing.T) {
+	// DBのモック
+	mockDB := "dummy"
+
 	// リポジトリのモック
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -56,10 +59,10 @@ func TestUserUsecase_FindAll(t *testing.T) {
 				DeletedAt: nil,
 			},
 		}
-		mockRepo.EXPECT().FindAll(gomock.Any()).Return(expectedUsers, nil)
+		mockRepo.EXPECT().FindAll(gomock.Any(), gomock.Any()).Return(expectedUsers, nil)
 
 		// ユースケースのインスタンス化
-		userUsecase := NewUserUsecase(mockRepo, mockLogger)
+		userUsecase := NewUserUsecase(mockDB, mockRepo, mockLogger)
 
 		// テストの実行
 		ctx := context.Background()

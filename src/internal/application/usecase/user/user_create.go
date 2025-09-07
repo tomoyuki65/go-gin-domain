@@ -15,5 +15,5 @@ func (u *userUsecase) Create(ctx context.Context, lastName, firstName, email str
 	// 新規ユーザー作成
 	user := domain_user.NewUser(uid, lastName, firstName, email)
 
-	return u.userRepo.Create(ctx, user)
+	return u.userRepo.Create(ctx, u.db, user)
 }

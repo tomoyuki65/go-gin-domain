@@ -8,7 +8,7 @@ import (
 )
 
 func (u *userUsecase) Update(ctx context.Context, uid, lastName, firstName, email string) (*domain_user.User, error) {
-	user, err := u.userRepo.FindByUID(ctx, uid)
+	user, err := u.userRepo.FindByUID(ctx, u.db, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -26,5 +26,5 @@ func (u *userUsecase) Update(ctx context.Context, uid, lastName, firstName, emai
 		return nil, err
 	}
 
-	return u.userRepo.Save(ctx, user)
+	return u.userRepo.Save(ctx, u.db, user)
 }

@@ -101,12 +101,14 @@ type UserUsecase interface {
 }
 
 type userUsecase struct {
+        db       string
         userRepo domain_user.UserRepository
         logger   logger.Logger
 }
 
-func NewUserUsecase(userRepo domain_user.UserRepository, logger logger.Logger) UserUsecase <span class="cov8" title="1">{
+func NewUserUsecase(db string, userRepo domain_user.UserRepository, logger logger.Logger) UserUsecase <span class="cov8" title="1">{
         return &amp;userUsecase{
+                db:       db,
                 userRepo: userRepo,
                 logger:   logger,
         }
@@ -130,7 +132,7 @@ func (u *userUsecase) Create(ctx context.Context, lastName, firstName, email str
         // 新規ユーザー作成
         user := domain_user.NewUser(uid, lastName, firstName, email)
 
-        return u.userRepo.Create(ctx, user)
+        return u.userRepo.Create(ctx, u.db, user)
 }</span>
 </pre>
 		
@@ -144,7 +146,7 @@ import (
 )
 
 func (u *userUsecase) Delete(ctx context.Context, uid string) (*domain_user.User, error) <span class="cov8" title="1">{
-        user, err := u.userRepo.FindByUID(ctx, uid)
+        user, err := u.userRepo.FindByUID(ctx, u.db, uid)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
@@ -159,7 +161,7 @@ func (u *userUsecase) Delete(ctx context.Context, uid string) (*domain_user.User
         // 論理削除設定
         <span class="cov8" title="1">user.SetDelete()
 
-        return u.userRepo.Save(ctx, user)</span>
+        return u.userRepo.Save(ctx, u.db, user)</span>
 }
 </pre>
 		
@@ -172,7 +174,7 @@ import (
 )
 
 func (u *userUsecase) FindAll(ctx context.Context) ([]*domain_user.User, error) <span class="cov8" title="1">{
-        return u.userRepo.FindAll(ctx)
+        return u.userRepo.FindAll(ctx, u.db)
 }</span>
 </pre>
 		
@@ -185,7 +187,7 @@ import (
 )
 
 func (u *userUsecase) FindByUID(ctx context.Context, uid string) (*domain_user.User, error) <span class="cov8" title="1">{
-        return u.userRepo.FindByUID(ctx, uid)
+        return u.userRepo.FindByUID(ctx, u.db, uid)
 }</span>
 </pre>
 		
@@ -199,7 +201,7 @@ import (
 )
 
 func (u *userUsecase) Update(ctx context.Context, uid, lastName, firstName, email string) (*domain_user.User, error) <span class="cov8" title="1">{
-        user, err := u.userRepo.FindByUID(ctx, uid)
+        user, err := u.userRepo.FindByUID(ctx, u.db, uid)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
@@ -217,7 +219,7 @@ func (u *userUsecase) Update(ctx context.Context, uid, lastName, firstName, emai
                 return nil, err
         }</span>
 
-        <span class="cov8" title="1">return u.userRepo.Save(ctx, user)</span>
+        <span class="cov8" title="1">return u.userRepo.Save(ctx, u.db, user)</span>
 }
 </pre>
 		

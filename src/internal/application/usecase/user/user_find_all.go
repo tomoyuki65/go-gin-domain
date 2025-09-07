@@ -7,5 +7,5 @@ import (
 )
 
 func (u *userUsecase) FindAll(ctx context.Context) ([]*domain_user.User, error) {
-	return u.userRepo.FindAll(ctx)
+	return u.userRepo.FindAll(ctx, u.db)
 }

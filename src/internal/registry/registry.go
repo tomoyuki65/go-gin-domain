@@ -34,8 +34,8 @@ func NewController() *Controller {
 	}
 
 	// userドメインのハンドラー設定
-	userRepo := persistence_user.NewUserRepository(db_dummy, logger)
-	userUsecase := usecase_user.NewUserUsecase(userRepo, logger)
+	userRepo := persistence_user.NewUserRepository(logger)
+	userUsecase := usecase_user.NewUserUsecase(db_dummy, userRepo, logger)
 	userHandler := handler_user.NewUserHandler(userUsecase)
 
 	return &Controller{

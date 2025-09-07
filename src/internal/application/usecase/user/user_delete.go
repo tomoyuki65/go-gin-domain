@@ -8,7 +8,7 @@ import (
 )
 
 func (u *userUsecase) Delete(ctx context.Context, uid string) (*domain_user.User, error) {
-	user, err := u.userRepo.FindByUID(ctx, uid)
+	user, err := u.userRepo.FindByUID(ctx, u.db, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -23,5 +23,5 @@ func (u *userUsecase) Delete(ctx context.Context, uid string) (*domain_user.User
 	// 論理削除設定
 	user.SetDelete()
 
-	return u.userRepo.Save(ctx, user)
+	return u.userRepo.Save(ctx, u.db, user)
 }

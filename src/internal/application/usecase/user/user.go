@@ -16,12 +16,14 @@ type UserUsecase interface {
 }
 
 type userUsecase struct {
+	db       string
 	userRepo domain_user.UserRepository
 	logger   logger.Logger
 }
 
-func NewUserUsecase(userRepo domain_user.UserRepository, logger logger.Logger) UserUsecase {
+func NewUserUsecase(db string, userRepo domain_user.UserRepository, logger logger.Logger) UserUsecase {
 	return &userUsecase{
+		db:       db,
 		userRepo: userRepo,
 		logger:   logger,
 	}

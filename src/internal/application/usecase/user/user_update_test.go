@@ -24,6 +24,9 @@ func init() {
 }
 
 func TestUserUsecase_Update(t *testing.T) {
+	// DBのモック
+	mockDB := "dummy"
+
 	// リポジトリのモック
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -44,7 +47,7 @@ func TestUserUsecase_Update(t *testing.T) {
 			UpdatedAt: time.Time{},
 			DeletedAt: nil,
 		}
-		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any()).Return(findUser, nil)
+		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any(), gomock.Any()).Return(findUser, nil)
 
 		expectedUser := &domain_user.User{
 			ID:        1,
@@ -56,10 +59,10 @@ func TestUserUsecase_Update(t *testing.T) {
 			UpdatedAt: time.Now(),
 			DeletedAt: nil,
 		}
-		mockRepo.EXPECT().Save(gomock.Any(), gomock.Any()).Return(expectedUser, nil)
+		mockRepo.EXPECT().Save(gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedUser, nil)
 
 		// ユースケースのインスタンス化
-		userUsecase := NewUserUsecase(mockRepo, mockLogger)
+		userUsecase := NewUserUsecase(mockDB, mockRepo, mockLogger)
 
 		// テストの実行
 		ctx := context.Background()
@@ -87,10 +90,10 @@ func TestUserUsecase_Update(t *testing.T) {
 	t.Run("対象ユーザー取得でエラーの場合にエラーを返すこと", func(t *testing.T) {
 		// モック化
 		err := fmt.Errorf("Internal Server Error")
-		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any()).Return(nil, err)
+		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, err)
 
 		// ユースケースのインスタンス化
-		userUsecase := NewUserUsecase(mockRepo, mockLogger)
+		userUsecase := NewUserUsecase(mockDB, mockRepo, mockLogger)
 
 		// テストの実行
 		ctx := context.Background()
@@ -107,11 +110,11 @@ func TestUserUsecase_Update(t *testing.T) {
 
 	t.Run("対象ユーザーが存在しない場合にエラーを返すこと", func(t *testing.T) {
 		// モック化
-		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any()).Return(nil, nil)
+		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, nil)
 		mockLogger.EXPECT().Error(gomock.Any(), gomock.Any()).Return()
 
 		// ユースケースのインスタンス化
-		userUsecase := NewUserUsecase(mockRepo, mockLogger)
+		userUsecase := NewUserUsecase(mockDB, mockRepo, mockLogger)
 
 		// テストの実行
 		ctx := context.Background()
@@ -138,10 +141,10 @@ func TestUserUsecase_Update(t *testing.T) {
 			UpdatedAt: time.Time{},
 			DeletedAt: nil,
 		}
-		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any()).Return(findUser, nil)
+		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any(), gomock.Any()).Return(findUser, nil)
 
 		// ユースケースのインスタンス化
-		userUsecase := NewUserUsecase(mockRepo, mockLogger)
+		userUsecase := NewUserUsecase(mockDB, mockRepo, mockLogger)
 
 		// テストの実行
 		ctx := context.Background()

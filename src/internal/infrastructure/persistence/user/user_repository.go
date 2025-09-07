@@ -10,18 +10,16 @@ import (
 )
 
 type userRepository struct {
-	db     string // 型はDummy
 	logger logger_usecase.Logger
 }
 
-func NewUserRepository(db string, logger logger_usecase.Logger) domain.UserRepository {
+func NewUserRepository(logger logger_usecase.Logger) domain.UserRepository {
 	return &userRepository{
-		db:     db,
 		logger: logger,
 	}
 }
 
-func (r *userRepository) Create(ctx context.Context, user *domain.User) (*domain.User, error) {
+func (r *userRepository) Create(ctx context.Context, db string, user *domain.User) (*domain.User, error) {
 	// 戻り値の例
 	createUser := &domain.User{
 		ID:        1,
@@ -36,14 +34,14 @@ func (r *userRepository) Create(ctx context.Context, user *domain.User) (*domain
 
 	dummy := &domain.User{}
 	if createUser == dummy {
-		msg := fmt.Sprintf("[%s] user is nil", r.db)
+		msg := fmt.Sprintf("[%s] user is nil", db)
 		r.logger.Error(ctx, msg)
 	}
 
 	return createUser, nil
 }
 
-func (r *userRepository) FindAll(ctx context.Context) ([]*domain.User, error) {
+func (r *userRepository) FindAll(ctx context.Context, db string) ([]*domain.User, error) {
 	// 戻り値の例
 	users := []*domain.User{
 		{
@@ -69,14 +67,14 @@ func (r *userRepository) FindAll(ctx context.Context) ([]*domain.User, error) {
 	}
 
 	if len(users) == 0 {
-		msg := fmt.Sprintf("[%s] users is nil", r.db)
+		msg := fmt.Sprintf("[%s] users is nil", db)
 		r.logger.Error(ctx, msg)
 	}
 
 	return users, nil
 }
 
-func (r *userRepository) FindByUID(ctx context.Context, uid string) (*domain.User, error) {
+func (r *userRepository) FindByUID(ctx context.Context, db string, uid string) (*domain.User, error) {
 	// 戻り値の例
 	var user *domain.User
 	if uid == "xxxx-xxxx-xxxx-0001" {
@@ -97,7 +95,7 @@ func (r *userRepository) FindByUID(ctx context.Context, uid string) (*domain.Use
 	return user, nil
 }
 
-func (r *userRepository) Save(ctx context.Context, user *domain.User) (*domain.User, error) {
+func (r *userRepository) Save(ctx context.Context, db string, user *domain.User) (*domain.User, error) {
 	// 戻り値の例
 	return user, nil
 }

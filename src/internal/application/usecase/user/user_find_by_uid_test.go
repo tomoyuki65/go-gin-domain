@@ -24,6 +24,9 @@ func init() {
 }
 
 func TestUserUsecase_FindByUID(t *testing.T) {
+	// DBのモック
+	mockDB := "dummy"
+
 	// リポジトリのモック
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -44,10 +47,10 @@ func TestUserUsecase_FindByUID(t *testing.T) {
 			UpdatedAt: time.Time{},
 			DeletedAt: nil,
 		}
-		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any()).Return(expectedUser, nil)
+		mockRepo.EXPECT().FindByUID(gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedUser, nil)
 
 		// ユースケースのインスタンス化
-		userUsecase := NewUserUsecase(mockRepo, mockLogger)
+		userUsecase := NewUserUsecase(mockDB, mockRepo, mockLogger)
 
 		// テストの実行
 		ctx := context.Background()
