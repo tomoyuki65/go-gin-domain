@@ -142,3 +142,5 @@ go test -run=^$ -tags=integration -bench=BenchmarkUserHandler_Create -cpuprofile
 ## 参考記事  
 [・Go言語（Golang）のGinでDDD（ドメイン駆動設計）構成のバックエンドAPIを開発する方法まとめ](https://golang.tomoyuki65.com/how-to-develop-api-with-ddd-using-gin-in-golang)  
   
+[・Go言語（Golang）のAPIでベンチマークからパフォーマンス計測する方法まとめ](https://golang.tomoyuki65.com/how-to-measure-performance-with-golang-api)  
+  
