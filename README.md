@@ -111,20 +111,31 @@ docker compose exec api mockgen -source=./internal/application/usecase/XXX/XXX.g
 ```
   
 ### 5. テストコードの実行
-・テストコードのファイル（ _test.go ）を追加したパッケージのみテストを実行
+・テストコードのファイル（ _test.go ）を追加したパッケージのみテストを実行（ビルドタグ指定あり）
 ```
-docker compose exec api go test -v $(docker compose exec api go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./...)
+docker compose exec api go test -v -tags=unit $(docker compose exec api go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' -tags=unit ./...)
 ```  
 > ※オプション「-cover」を付けるとカバレッジも確認できます。カバレッジは80%以上推薦です。  
+  
+> ※インテグレーションテストの実行は2箇所のタグオプションを「-tags=integration」に変更して実行して下さい。  
   
 ### 6. テストコードのカバレッジ対象確認用のファイル出力
 必要に応じて以下のコマンドを実行し、出力されるファイルからカバレッジ対象のコードを確認して下さい。  
 ```
-docker compose exec api go test -v -coverprofile=internal/coverage.out $(docker compose exec api go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' ./...)
+docker compose exec api go test -v -tags=unit -coverprofile=internal/coverage.out $(docker compose exec api go list -f '{{if or .TestGoFiles .XTestGoFiles}}{{.ImportPath}}{{end}}' -tags=unit ./...)
 
 docker compose exec api go tool cover -html=internal/coverage.out -o=internal/coverage.html
 ```  
 > <span style="color:red">※src/internal/coverage.htmlをブラウザで開いて確認して下さい。</span>  
+  
+### ７. ベンチマークを実行してファイル出力
+インテグレーション用のテストコードなどにベンチマーク関数を追加し、以下のようなコマンドでベンチマーク実行後、各種ファイルを出力可能です。  
+
+```
+docker compose exec -w /go/src/internal/presentation/handler/user api \
+go test -run=^$ -tags=integration -bench=BenchmarkUserHandler_Create -cpuprofile cpu_create.prof -memprofile mem_create.prof -blockprofile block_create.prof -trace trace_create.out -benchmem
+```
+> ※オプション「-tags」でインテグレーション用のファイルのみ実行するようにし、オプション「-bench」で対象のベンチマーク関数のみ実行するようにしています。出力するファイルも対象のAPIごとに出力した方がいいのでファイル名を指定しています。  
   
 <br />
   
