@@ -137,6 +137,28 @@ go test -run=^$ -tags=integration -bench=BenchmarkUserHandler_Create -cpuprofile
 ```
 > ※オプション「-tags」でインテグレーション用のファイルのみ実行するようにし、オプション「-bench」で対象のベンチマーク関数のみ実行するようにしています。出力するファイルも対象のAPIごとに出力した方がいいのでファイル名を指定しています。  
   
+### 8. ベンチマーク用ファイルの確認コマンド例
+・CPU使用状況の確認
+```
+docker compose exec api go tool pprof /go/src/internal/presentation/handler/user/cpu_create.prof
+```
+  
+・メモリ使用量の確認
+```
+docker compose exec api go tool pprof /go/src/internal/presentation/handler/user/mem_create.prof
+```
+  
+・ブロック時間の確認
+```
+docker compose exec api go tool pprof /go/src/internal/presentation/handler/user/block_create.prof
+```
+  
+・トレースファイルの確認
+```
+docker compose exec api go tool trace -http=:8081 /go/src/internal/presentation/handler/user/trace_create.out
+```
+> ※ブラウザで「http://localhost:8081」を開く
+  
 <br />
   
 ## 参考記事  
