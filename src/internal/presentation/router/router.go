@@ -23,5 +23,9 @@ func SetupRouter(c *registry.Controller, m *middleware.Middleware) *gin.Engine {
 	apiV1.PUT("/user/:uid", m.Auth(), c.User.Update)
 	apiV1.DELETE("/user/:uid", m.Auth(), c.User.Delete)
 
+	// Post用追加
+	apiV1.POST("/post", c.Post.Create)
+	apiV1.GET("/posts", c.Post.FindAll)
+
 	return r
 }
